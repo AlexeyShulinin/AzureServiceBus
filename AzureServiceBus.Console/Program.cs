@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using Azure.Messaging.ServiceBus;
 using AzureServiceBus.Console;
 using Microsoft.Extensions.Configuration;
