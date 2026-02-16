@@ -15,14 +15,23 @@ public class ProcessQueueMessageService(ILogger<ProcessQueueMessageService> logg
     {
         logger.LogInformation("Start listening for queue Messages...");
 
-        await using var processor = serviceBusClient.CreateProcessor(configuration.GetSection("ServiceBusQueueName").Value, new ServiceBusProcessorOptions());
+        var processorOptions = new ServiceBusProcessorOptions
+        {
+            Identifier = "AzureServiceBus.Consumer.ProcessQueueMessageService",
+            ReceiveMode = ServiceBusReceiveMode.ReceiveAndDelete,
+            PrefetchCount = 5,
+            MaxConcurrentCalls = 2,
+            AutoCompleteMessages = false
+        };
+        
+        await using var processor = serviceBusClient.CreateProcessor(configuration.GetSection("ServiceBusQueueName").Value, processorOptions);
 
         processor.ProcessMessageAsync += MessageHandler;
         processor.ProcessErrorAsync += async eventArgs =>
         {
             logger.LogError(eventArgs.Exception.Message);
 
-            var receiver = serviceBusClient.CreateReceiver(configuration.GetSection("ServiceBusQueueName").Value, new ServiceBusReceiverOptions()
+            var receiver = serviceBusClient.CreateReceiver(configuration.GetSection("ServiceBusQueueName").Value, new ServiceBusReceiverOptions
             {
                 ReceiveMode = ServiceBusReceiveMode.PeekLock
             });

@@ -1,3 +1,4 @@
+using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Azure.Messaging.ServiceBus;
@@ -39,7 +40,20 @@ builder.Services.AddSingleton(_ =>
 });
 
 builder.Services.AddSingleton<AzureServiceBusClient>();
-builder.Services.AddSingleton(_ => new ServiceBusClient(builder.Configuration["ServiceBusConnectionString"]));
+builder.Services.AddSingleton(_ =>
+{
+    var options = new ServiceBusClientOptions
+    {
+        RetryOptions = new ServiceBusRetryOptions
+        {
+            Mode = ServiceBusRetryMode.Exponential,
+            TryTimeout = TimeSpan.FromSeconds(60),
+            MaxRetries = 5
+        }
+    };
+    
+    return new ServiceBusClient(builder.Configuration["ServiceBusConnectionString"], options);
+});
 
 builder.Services.AddOpenApi();
 

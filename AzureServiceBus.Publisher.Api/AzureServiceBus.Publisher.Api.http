@@ -1,6 +1,24 @@
-@AzureServiceBus.Publisher.Api_HostAddress = http://localhost:5054
+@Api_HostAddress = https://localhost:9001
 
-GET {{AzureServiceBus.Publisher.Api_HostAddress}}/weatherforecast/
+POST {{Api_HostAddress}}/api/orders
 Accept: application/json
+Content-Type: application/json
+
+{
+  "Product": "Lenovo PC",
+  "Amount": 24,
+  "Count": 2,
+  "Customer": "Fake"
+}
 
 ###
+
+PUT {{Api_HostAddress}}/api/orders/orders-2cbc0d8a-3efb-4ba5-910f-1c8d0141a1d2
+Accept: application/json
+Content-Type: application/json
+
+{
+  "Amount": 1000,
+  "Count": 2,
+  "Status": "Delivered"
+}
