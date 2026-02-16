@@ -1,3 +1,5 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Azure.Messaging.ServiceBus;
 using AzureServiceBus.Functions.Database;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +19,16 @@ var host = new HostBuilder()
     {
         services.AddSingleton(_ => new ServiceBusClient(context.Configuration["ServiceBusConnectionString"]));
         services.AddDbContext<AppDbContext>(options => options.UseInMemoryDatabase(databaseName: "dbInventory"));
+        
+        services.AddSingleton(_ =>
+        {
+            var serializeOptions = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            };
+            serializeOptions.Converters.Add(new JsonStringEnumConverter());
+            return serializeOptions;
+        });
     })
     .Build();
     
