@@ -18,7 +18,15 @@ var host = new HostBuilder()
     .ConfigureServices((context, services) =>
     {
         services.AddSingleton(_ => new ServiceBusClient(context.Configuration["ServiceBusConnectionString"]));
-        services.AddDbContext<AppDbContext>(options => options.UseInMemoryDatabase(databaseName: "dbInventory"));
+        services.AddDbContext<AppDbContext>((_, options) =>
+        {
+            options.UseNpgsql(context.Configuration.GetConnectionString("PostgreSql"))
+                .UseLowerCaseNamingConvention();
+                    
+        #if (DEBUG)
+                    options.EnableSensitiveDataLogging();
+        #endif
+        });
         
         services.AddSingleton(_ =>
         {
@@ -31,12 +39,5 @@ var host = new HostBuilder()
         });
     })
     .Build();
-    
-var scopeFactory = host.Services.GetRequiredService<IServiceScopeFactory>();
-var scope = scopeFactory.CreateScope();
-await using (var context = scope.ServiceProvider.GetService<AppDbContext>())
-{
-    await context.SeedAsync();
-}
 
 host.Run();

@@ -18,7 +18,7 @@ builder.Host
     .UseSerilog((c, l) => l.ReadFrom.Configuration(c.Configuration))
     .ConfigureAppConfiguration(b => b.AddJsonFile("appSettings.json", true, true).AddUserSecrets<Program>().Build());
 
-builder.Services.AddDatabase();
+builder.Services.AddDatabase(builder.Configuration);
 builder.Services.AddRepositories();
 builder.Services.AddServices();
 builder.Services.AddEndpointsApiExplorer();

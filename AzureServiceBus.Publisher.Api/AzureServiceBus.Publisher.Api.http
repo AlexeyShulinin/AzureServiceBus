@@ -5,10 +5,10 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "Product": "Lenovo PC",
-  "Amount": 24,
-  "Count": 2,
-  "Customer": "Fake"
+  "Product": "Logitech Mouse",
+  "Amount": 15,
+  "Count": 1,
+  "Customer": "Joseph Cristian"
 }
 
 ###

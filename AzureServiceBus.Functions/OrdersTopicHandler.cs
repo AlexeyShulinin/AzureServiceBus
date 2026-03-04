@@ -32,6 +32,15 @@ public class OrdersTopicHandler(AppDbContext dbContext, JsonSerializerOptions js
                 return;
             }
             
+            if (inventory.Count <= 0)
+            {
+                await messageActions.DeadLetterMessageAsync(message, deadLetterReason: "InventoryItemOutOfStock", deadLetterErrorDescription: "InventoryItemNotFound");
+                return;
+            }
+
+            inventory.Count--;
+            await dbContext.SaveChangesAsync();
+            
             await messageActions.CompleteMessageAsync(message);
         }
         catch (Exception e)
