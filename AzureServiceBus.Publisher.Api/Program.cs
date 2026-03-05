@@ -57,14 +57,24 @@ builder.Services.AddSingleton(_ =>
 
 builder.Services.AddOpenApi();
 
-var app = builder.Build();
+var allowAllOrigins = "allowAllOrigins";
 
-if (app.Environment.IsDevelopment())
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: allowAllOrigins,
+        policy  => { policy.WithOrigins("*"); });
+});
+
+var app = builder.Build();
+app.MapOpenApi();
+/*if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
-}
+}*/
 
+app.UseCors(allowAllOrigins);
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseHttpsRedirection();
 app.RegisterOrdersEndpoints();
+app.RegisterHealthEndpoints();
 app.Run();

@@ -1,4 +1,30 @@
 ﻿services:
+    azure-service-bus-api:
+        build:
+            context: ../AzureServiceBus.Publisher.Api
+            dockerfile: Dockerfile
+        image: azure-service-bus-api
+        container_name: azure-service-bus-api
+        ports:
+            - "9002:5055"
+        environment:
+            - ASPNETCORE_ENVIRONMENT=Production
+            - ASPNETCORE_HTTP_PORTS=5055
+            - ConnectionStrings__PostgreSql=Host=postgres;Port=5432;Username=${DB_USER};Password=${DB_PASSWORD};Database=azure-app
+            - ServiceBusConnectionString=Endpoint=${SERVICE_BUS_CONNECTION}
+        depends_on:
+            - postgres
+        networks:
+            - azureservicebus
+                
+    azure-service-bus-functions:
+        build:
+            context: ../AzureServiceBus.Functions
+            dockerfile: Dockerfile
+        environment:
+            - ConnectionStrings__PostgreSql=Host=postgres;Port=5432;Username=${DB_USER};Password=${DB_PASSWORD};Database=azure-app
+            - ServiceBusConnectionString=Endpoint=${SERVICE_BUS_CONNECTION}
+
     postgres:
         image: "postgres:latest"
         ports:
@@ -9,3 +35,9 @@
             POSTGRES_DB: ${DB_NAME}
         volumes:
             - ./db-data/:/var/lib/postgresql
+        networks:
+            - azureservicebus
+    
+networks:
+    azureservicebus:
+        driver: bridge

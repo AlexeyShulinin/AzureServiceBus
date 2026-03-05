@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using AzureServiceBus.Publisher.Api.Database.Models;
 using AzureServiceBus.Publisher.Api.Enums;
 using AzureServiceBus.Publisher.Api.Repositories.Models;
@@ -30,4 +32,7 @@ public static class OrdersMapper
             Date = source.Date,
             Status = Enum.TryParse<Status>(source.Status, out var result) ? result : null
         };
+    
+    public static List<T> MapToList<T>(this List<Order> source) where T : OrderDtoModel, new()
+        => source.Select(MapTo<T>).ToList();
 }

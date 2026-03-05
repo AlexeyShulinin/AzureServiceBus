@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using AzureServiceBus.Publisher.Api.Repositories.Models;
 
@@ -9,4 +10,6 @@ public interface IOrdersRepository
     Task<OrderDtoModel> CreateOrderAsync(OrderDtoModel order, CancellationToken cancellationToken);
 
     Task<OrderDtoModel> UpdateOrderAsync(string orderId, OrderDtoModel order, CancellationToken cancellationToken);
+    
+    Task<List<OrderDtoModel>> ListAsync(CancellationToken cancellationToken);
 }

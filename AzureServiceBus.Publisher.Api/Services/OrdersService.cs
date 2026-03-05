@@ -1,9 +1,11 @@
-﻿using System.Text.Json;
+﻿using System.Collections.Generic;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using AzureServiceBus.Publisher.Api.Azure;
 using AzureServiceBus.Publisher.Api.Enums;
 using AzureServiceBus.Publisher.Api.Models.Requests;
+using AzureServiceBus.Publisher.Api.Models.Responses;
 using AzureServiceBus.Publisher.Api.Repositories.Interfaces;
 using AzureServiceBus.Publisher.Api.Repositories.Models;
 using AzureServiceBus.Publisher.Api.Resources;
@@ -37,4 +39,7 @@ public class OrdersService(IOrdersRepository ordersRepository, AzureServiceBusCl
         logger.LogInformation($"Order updated: {JsonSerializer.Serialize(updatedOrder)}");
         return string.Format(ApiMessages.OrderSuccessfullyUpdated,  updatedOrder.OrderId);
     }
+
+    public async Task<List<GetOrderListResponse>> GetOrderListAsync(CancellationToken cancellationToken) 
+        => (await ordersRepository.ListAsync(cancellationToken)).MapToList();
 }

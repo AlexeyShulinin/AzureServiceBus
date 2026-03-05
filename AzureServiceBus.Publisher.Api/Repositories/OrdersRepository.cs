@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using AzureServiceBus.Publisher.Api.Database;
@@ -41,4 +42,7 @@ public class OrdersRepository(AppDbContext dbContext) : IOrdersRepository
         await dbContext.SaveChangesAsync(cancellationToken);
         return dbOrder.MapTo<OrderDtoModel>();
     }
+
+    public async Task<List<OrderDtoModel>> ListAsync(CancellationToken cancellationToken)
+        => (await dbContext.Orders.ToListAsync(cancellationToken)).MapToList<OrderDtoModel>();
 }

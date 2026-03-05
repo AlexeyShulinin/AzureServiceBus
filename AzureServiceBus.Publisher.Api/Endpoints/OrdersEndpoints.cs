@@ -1,6 +1,8 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using AzureServiceBus.Publisher.Api.Models.Requests;
+using AzureServiceBus.Publisher.Api.Models.Responses;
 using AzureServiceBus.Publisher.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Builder;
 
@@ -11,6 +13,14 @@ public static class OrdersEndpoints
     public static void RegisterOrdersEndpoints(this WebApplication app)
     {
         var api = app.MapGroup("/api/");
+
+        api.MapGet("orders", GetOrderListAsync)
+            .AddOpenApiOperationTransformer((operation, context, ct) =>
+            {
+                operation.Summary     = "Get orders.";
+                operation.Description = "Returns list of orders.";
+                return Task.FromResult(operation);
+            });
 
         api.MapPost("orders", CreateOrderAsync)
             .AddOpenApiOperationTransformer((operation, context, ct) =>
@@ -34,4 +44,7 @@ public static class OrdersEndpoints
     
     private static Task<string> UpdateOrderAsync(string orderId, UpdateOrderRequest orderRequest, IOrdersService ordersService, CancellationToken cancellationToken)
         => ordersService.UpdateOrderAsync(orderId, orderRequest, cancellationToken);
+    
+    private static Task<List<GetOrderListResponse>> GetOrderListAsync(IOrdersService ordersService, CancellationToken cancellationToken)
+        => ordersService.GetOrderListAsync(cancellationToken);
 }

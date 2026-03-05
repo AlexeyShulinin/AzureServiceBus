@@ -1,4 +1,7 @@
-﻿using AzureServiceBus.Publisher.Api.Models.Requests;
+﻿using System.Collections.Generic;
+using System.Linq;
+using AzureServiceBus.Publisher.Api.Models.Requests;
+using AzureServiceBus.Publisher.Api.Models.Responses;
 using AzureServiceBus.Publisher.Api.Repositories.Models;
 
 namespace AzureServiceBus.Publisher.Api.Services.Mappings;
@@ -21,4 +24,10 @@ public static class OrdersMapper
             Count = source.Count,
             Status = source.Status
         };
+
+    private static GetOrderListResponse MapTo(this OrderDtoModel source)
+        => new(source.OrderId, source.Product, source.Amount, source.Count, source.Date, source.Status.ToString());
+    
+    public static List<GetOrderListResponse> MapToList(this List<OrderDtoModel> source)
+        => source.Select(MapTo).ToList();
 }
