@@ -5,15 +5,14 @@ EXPOSE 8080
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["AzureServiceBus.Functions.csproj", "AzureServiceBus.Functions/"]
-RUN dotnet restore "./AzureServiceBus.Functions/AzureServiceBus.Functions.csproj"
+COPY ["AzureServiceBus.Functions.csproj", "."]
+RUN dotnet restore "AzureServiceBus.Functions.csproj"
 COPY . .
-WORKDIR "/src/AzureServiceBus.Functions"
-RUN dotnet build "./AzureServiceBus.Functions.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "AzureServiceBus.Functions.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./AzureServiceBus.Functions.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "AzureServiceBus.Functions.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /home/site/wwwroot

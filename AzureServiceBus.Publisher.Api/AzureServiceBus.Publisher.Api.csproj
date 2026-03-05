@@ -49,12 +49,4 @@
       </Content>
     </ItemGroup>
 
-    <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition=" '$(Configuration)' == 'Release' ">
-        <Message Text="Publishing release" Importance="high"/>
-        <Exec Command="dotnet publish -c Release --no-build" />
-
-        <Message Text="Docker image build" Importance="high"/>
-        <Exec Command="docker build -t azure-service-bus-api ." />
-    </Target>
-
 </Project>
