@@ -10,19 +10,25 @@
             - ASPNETCORE_ENVIRONMENT=Production
             - ASPNETCORE_HTTP_PORTS=5055
             - ConnectionStrings__PostgreSql=Host=postgres;Port=5432;Username=${DB_USER};Password=${DB_PASSWORD};Database=azure-app
-            - ServiceBusConnectionString=Endpoint=${SERVICE_BUS_CONNECTION}
+            - ServiceBusConnectionString=${SERVICE_BUS_CONNECTION}
+            - ApplicationInsights__ConnectionString=${APP_INSIGHT}
         depends_on:
             - postgres
         networks:
             - azureservicebus
-                
+        
     azure-service-bus-functions:
         build:
             context: ../AzureServiceBus.Functions
             dockerfile: Dockerfile
         environment:
             - ConnectionStrings__PostgreSql=Host=postgres;Port=5432;Username=${DB_USER};Password=${DB_PASSWORD};Database=azure-app
-            - ServiceBusConnectionString=Endpoint=${SERVICE_BUS_CONNECTION}
+            - ServiceBusConnectionString=${SERVICE_BUS_CONNECTION}
+            - ApplicationInsights__ConnectionString=${APP_INSIGHT}
+        depends_on:
+            - postgres
+        networks:
+            - azureservicebus
 
     postgres:
         image: "postgres:latest"

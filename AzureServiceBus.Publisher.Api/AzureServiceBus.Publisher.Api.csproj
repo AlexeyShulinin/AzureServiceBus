@@ -10,8 +10,13 @@
     <ItemGroup>
         <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.20.1" />
         <PackageReference Include="EFCore.NamingConventions" Version="10.0.1" />
+        <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="3.0.0" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.0"/>
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0" />
+        <PackageReference Include="Npgsql.OpenTelemetry" Version="10.0.1" />
+        <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.15.0" />
+        <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.15.0" />
+        <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.15.0" />
         <PackageReference Include="Serilog" Version="4.3.1-dev-02406" />
         <PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
         <PackageReference Include="Serilog.Extensions.Logging" Version="10.0.0" />

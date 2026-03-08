@@ -2,6 +2,7 @@ using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Azure.Messaging.ServiceBus;
+using Azure.Monitor.OpenTelemetry.Exporter;
 using AzureServiceBus.Publisher.Api;
 using AzureServiceBus.Publisher.Api.Azure;
 using AzureServiceBus.Publisher.Api.Endpoints;
@@ -10,6 +11,10 @@ using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Npgsql;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -56,6 +61,32 @@ builder.Services.AddSingleton(_ =>
 });
 
 builder.Services.AddOpenApi();
+
+AppContext.SetSwitch("Azure.Experimental.EnableActivitySource", true);
+builder.Services.AddOpenTelemetry()
+    .WithTracing(tracing => tracing
+        .SetResourceBuilder(ResourceBuilder.CreateDefault()
+            .AddService("AzureServiceBus.Publisher.Api"))
+
+        .AddAspNetCoreInstrumentation(o => o.RecordException = true)
+        .AddHttpClientInstrumentation()
+
+        // Manually add ProsgreSQL
+        .AddNpgsql()
+
+        // Azure service bus tracing
+        .AddSource("Azure.*")
+
+        // Export App Insight
+        .AddAzureMonitorTraceExporter(o =>
+            o.ConnectionString = builder.Configuration
+                ["ApplicationInsights:ConnectionString"]))
+
+    .WithMetrics(metrics => metrics
+        .AddAspNetCoreInstrumentation()
+        .AddAzureMonitorMetricExporter(o =>
+            o.ConnectionString = builder.Configuration
+                ["ApplicationInsights:ConnectionString"]));
 
 var allowAllOrigins = "allowAllOrigins";
 

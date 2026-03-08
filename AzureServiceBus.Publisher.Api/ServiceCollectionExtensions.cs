@@ -1,4 +1,5 @@
-﻿using AzureServiceBus.Publisher.Api.Database;
+﻿using System;
+using AzureServiceBus.Publisher.Api.Database;
 using AzureServiceBus.Publisher.Api.Repositories;
 using AzureServiceBus.Publisher.Api.Repositories.Interfaces;
 using AzureServiceBus.Publisher.Api.Services;
@@ -6,6 +7,7 @@ using AzureServiceBus.Publisher.Api.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Npgsql;
 
 namespace AzureServiceBus.Publisher.Api;
 
@@ -13,10 +15,15 @@ public static class ServiceCollectionExtensions
 {
     public static void AddDatabase(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddDbContext<AppDbContext>((_, options) =>
+        var dataSource = new NpgsqlDataSourceBuilder(configuration.GetConnectionString("PostgreSql"))
+            .ConfigureTracing(o => o
+                .ConfigureCommandSpanNameProvider(cmd => cmd.CommandText))
+            .Build();
+
+        services.AddSingleton(dataSource);
+        services.AddDbContext<AppDbContext>(o =>
         {
-            options.UseNpgsql(configuration.GetConnectionString("PostgreSql"))
-                .UseLowerCaseNamingConvention();
+            o.UseNpgsql(dataSource).UseLowerCaseNamingConvention();
             
 #if (DEBUG)
             options.EnableSensitiveDataLogging();

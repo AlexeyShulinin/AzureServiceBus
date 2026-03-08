@@ -7,6 +7,7 @@ namespace AzureServiceBus.Functions.Database;
 public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {
     public DbSet<InventoryItem> InventoryItems { get; set; }
+    public DbSet<Order> Orders { get; set; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
