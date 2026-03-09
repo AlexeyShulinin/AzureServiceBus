@@ -1,0 +1,62 @@
+﻿services:
+    azure-service-bus-api:
+        image: ghcr.io/alshulinin/azure-service-bus-api:latest
+        container_name: azure-service-bus-api
+        ports:
+            - "9002:5055"
+        environment:
+            - ASPNETCORE_ENVIRONMENT=Production
+            - ASPNETCORE_HTTP_PORTS=5055
+            - ConnectionStrings__PostgreSql=Host=postgres;Port=5432;Username=${DB_USER};Password=${DB_PASSWORD};Database=azure-app
+            - ServiceBusConnectionString=${SERVICE_BUS_CONNECTION}
+            - ApplicationInsights__ConnectionString=${APP_INSIGHT}
+        depends_on:
+            - postgres
+        networks:
+            - azureservicebus
+    
+    azurite:
+        image: mcr.microsoft.com/azure-storage/azurite
+        ports:
+            - "10000:10000"
+            - "10001:10001"
+            - "10002:10002"
+        networks:
+            - azureservicebus
+    
+    azure-service-bus-functions:
+        image: ghcr.io/alshulinin/azure-service-bus-functions:latest
+        environment:
+            - AzureWebJobsStorage=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tiq/ED==;BlobEndpoint=http://azurite:10000/devstoreaccount1;QueueEndpoint=http://azurite:10001/devstoreaccount1;TableEndpoint=http://azurite:10002/devstoreaccount1;
+            - ConnectionStrings__PostgreSql=Host=postgres;Port=5432;Username=${DB_USER};Password=${DB_PASSWORD};Database=azure-app
+            - ServiceBusConnectionString=${SERVICE_BUS_CONNECTION}
+            - ApplicationInsights__ConnectionString=${APP_INSIGHT}
+        depends_on:
+            postgres:
+                condition: service_healthy
+            azurite:
+                condition: service_started
+        networks:
+            - azureservicebus
+
+    postgres:
+        image: "postgres:latest"
+        ports:
+            - 5432:5432
+        environment:
+            POSTGRES_USER: ${DB_USER}
+            POSTGRES_PASSWORD: ${DB_PASSWORD}
+            POSTGRES_DB: ${DB_NAME}
+        volumes:
+            - ./db-data/:/var/lib/postgresql
+        networks:
+            - azureservicebus
+        healthcheck:
+            test: [ "CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}" ]
+            interval: 5s
+            timeout: 5s
+            retries: 5
+
+networks:
+    azureservicebus:
+        driver: bridge
