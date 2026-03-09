@@ -72,7 +72,7 @@ jobs:
       - name: Deploy on server
         run: |
           ssh -i ~/.ssh/id_ed25519 ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
-            echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+            echo ${{ secrets.GIT_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
             cd /src/AzureServiceBus
             docker compose docker-compose.light.yaml pull
             docker compose docker-compose.light.yaml up -d
