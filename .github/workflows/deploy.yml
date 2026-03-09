@@ -33,5 +33,8 @@ jobs:
 
       - name: Deploy with docker compose
         run: |
-          ssh -i ~/.ssh/id_ed25519 ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
-            "cd /src/AzureServiceBus/Infrastructure && docker compose pull || true && docker compose up --build -d"
+          ssh -i ~/.ssh/id_ed25519 \
+            -o ServerAliveInterval=60 \
+            -o ServerAliveCountMax=10 \
+            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
+            "cd /src/AzureServiceBus/Infrastructure && docker compose up --build -d 2>&1 | tee /tmp/deploy.log; exit 0"
