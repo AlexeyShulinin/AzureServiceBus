@@ -22,11 +22,6 @@
             - "10001:10001"
             - "10002:10002"
         command: "azurite --loose --blobHost 0.0.0.0 --queueHost 0.0.0.0 --tableHost 0.0.0.0"
-        healthcheck:
-            test: ["CMD", "wget", "-qO-", "http://localhost:10000/devstoreaccount1"]
-            interval: 5s
-            timeout: 5s
-            retries: 5
         networks:
             - azureservicebus
     
@@ -41,7 +36,7 @@
             postgres:
                 condition: service_healthy
             azurite:
-                condition: service_healthy
+                condition: service_started
         networks:
             - azureservicebus
 
