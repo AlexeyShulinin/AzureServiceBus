@@ -1,6 +1,6 @@
 ﻿services:
     azure-service-bus-api:
-        image: ghcr.io/alshulinin/azure-service-bus-api:latest
+        image: ghcr.io/alexeyshulinin/azure-service-bus-api:latest
         container_name: azure-service-bus-api
         ports:
             - "9002:5055"
@@ -25,7 +25,7 @@
             - azureservicebus
     
     azure-service-bus-functions:
-        image: ghcr.io/alshulinin/azure-service-bus-functions:latest
+        image: ghcr.io/alexeyshulinin/azure-service-bus-functions:latest
         environment:
             - AzureWebJobsStorage=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tiq/ED==;BlobEndpoint=http://azurite:10000/devstoreaccount1;QueueEndpoint=http://azurite:10001/devstoreaccount1;TableEndpoint=http://azurite:10002/devstoreaccount1;
             - ConnectionStrings__PostgreSql=Host=postgres;Port=5432;Username=${DB_USER};Password=${DB_PASSWORD};Database=azure-app

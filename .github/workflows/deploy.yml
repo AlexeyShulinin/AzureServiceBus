@@ -33,7 +33,7 @@ jobs:
           context: ./AzureServiceBus.Publisher.Api
           file: ./AzureServiceBus.Publisher.Api/Dockerfile
           push: true
-          tags: ghcr.io/alshulinin/azure-service-bus-api:latest
+          tags: ghcr.io/alexeyshulinin/azure-service-bus-api:latest
 
       - name: Build and push Functions image
         uses: docker/build-push-action@v5
@@ -41,7 +41,7 @@ jobs:
           context: ./AzureServiceBus.Functions
           file: ./AzureServiceBus.Functions/Dockerfile
           push: true
-          tags: ghcr.io/alshulinin/azure-service-bus-functions:latest
+          tags: ghcr.io/alexeyshulinin/azure-service-bus-functions:latest
 
   deploy:
     runs-on: ubuntu-latest
