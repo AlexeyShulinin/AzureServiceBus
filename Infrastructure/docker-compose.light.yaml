@@ -21,8 +21,9 @@
             - "10000:10000"
             - "10001:10001"
             - "10002:10002"
+        command: "azurite --loose --blobHost 0.0.0.0 --queueHost 0.0.0.0 --tableHost 0.0.0.0"
         healthcheck:
-            test: [ "CMD", "nc", "-z", "localhost", "10000" ]
+            test: ["CMD", "wget", "-qO-", "http://localhost:10000/devstoreaccount1"]
             interval: 5s
             timeout: 5s
             retries: 5
