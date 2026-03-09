@@ -21,6 +21,11 @@
             - "10000:10000"
             - "10001:10001"
             - "10002:10002"
+        healthcheck:
+            test: [ "CMD", "nc", "-z", "localhost", "10000" ]
+            interval: 5s
+            timeout: 5s
+            retries: 5
         networks:
             - azureservicebus
     
@@ -35,7 +40,7 @@
             postgres:
                 condition: service_healthy
             azurite:
-                condition: service_started
+                condition: service_healthy
         networks:
             - azureservicebus
 
