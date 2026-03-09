@@ -24,14 +24,14 @@ jobs:
         run: |
           rsync -avz --exclude='.git' --exclude='.env' \
             -e "ssh -i ~/.ssh/id_ed25519" \
-            ./ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/opt/app/
+            ./ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/src/AzureServiceBus/
 
       - name: Write .env file on server
         run: |
           ssh -i ~/.ssh/id_ed25519 ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
-            "echo '${{ secrets.ENV_FILE }}' > /opt/app/.env"
+            "echo '${{ secrets.ENV_FILE }}' > /src/AzureServiceBus/.env"
 
       - name: Deploy with docker compose
         run: |
           ssh -i ~/.ssh/id_ed25519 ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
-            "cd /opt/app && docker compose pull || true && docker compose up --build -d"
+            "cd /src/AzureServiceBus && docker compose pull || true && docker compose up --build -d"
