@@ -74,7 +74,7 @@ jobs:
           ssh -i ~/.ssh/id_ed25519 ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
             echo ${{ secrets.GIT_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
             cd /src/AzureServiceBus
-            docker compose docker-compose.light.yaml pull
-            docker compose docker-compose.light.yaml up -d
+            docker compose -f docker-compose.light.yaml pull
+            docker compose -f docker-compose.light.yaml up -d
             docker image prune -f
           "
