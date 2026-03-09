@@ -24,4 +24,7 @@
     <data name="OrderSuccessfullyUpdated" xml:space="preserve">
         <value>Order {0} was successfully updated.</value>
     </data>
+    <data name="UnavailableToChangeOrdersInProgress" xml:space="preserve">
+        <value>Unavailable to change orders in status: {0}</value>
+    </data>
 </root>

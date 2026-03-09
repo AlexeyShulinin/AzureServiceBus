@@ -76,5 +76,14 @@ namespace AzureServiceBus.Publisher.Api.Resources {
                 return ResourceManager.GetString("OrderSuccessfullyUpdated", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unavailable to change orders in status: {0}.
+        /// </summary>
+        public static string UnavailableToChangeOrdersInProgress {
+            get {
+                return ResourceManager.GetString("UnavailableToChangeOrdersInProgress", resourceCulture);
+            }
+        }
     }
 }

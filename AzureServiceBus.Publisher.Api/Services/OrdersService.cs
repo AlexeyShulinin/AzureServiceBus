@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using AzureServiceBus.Publisher.Api.Azure;
 using AzureServiceBus.Publisher.Api.Enums;
+using AzureServiceBus.Publisher.Api.Exceptions;
 using AzureServiceBus.Publisher.Api.Models.Requests;
 using AzureServiceBus.Publisher.Api.Models.Responses;
 using AzureServiceBus.Publisher.Api.Repositories.Interfaces;
@@ -32,6 +33,9 @@ public class OrdersService(IOrdersRepository ordersRepository, AzureServiceBusCl
     public async Task<string> UpdateOrderAsync(string orderId, UpdateOrderRequest orderRequest, CancellationToken cancellationToken)
     {
         var orderDtoModel = orderRequest.MapTo<OrderDtoModel>();
+        
+        if (orderDtoModel.Status != Status.New)
+            throw new InvalidOperationException(string.Format(ApiMessages.UnavailableToChangeOrdersInProgress, orderDtoModel.Status?.ToString()));
 
         var updatedOrder = await ordersRepository.UpdateOrderAsync(orderId, orderDtoModel, cancellationToken);
         await serviceBusClient.SendOrderMessageAsync(updatedOrder, ActionType.Update, cancellationToken);

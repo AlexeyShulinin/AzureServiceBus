@@ -39,6 +39,7 @@ public class OrdersTopicHandler(AppDbContext dbContext, JsonSerializerOptions js
             }
 
             inventory.Count--;
+            await dbContext.Orders.ExecuteUpdateAsync(setter => setter.SetProperty(x => x.Status, "InProcess"));
             await dbContext.SaveChangesAsync();
             
             await messageActions.CompleteMessageAsync(message);
