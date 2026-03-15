@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Azure.Messaging.ServiceBus;
@@ -39,7 +40,10 @@ public class OrdersTopicHandler(AppDbContext dbContext, JsonSerializerOptions js
             }
 
             inventory.Count--;
-            await dbContext.Orders.ExecuteUpdateAsync(setter => setter.SetProperty(x => x.Status, "InProcess"));
+            await dbContext.Orders.Where(x => x.OrderId == order.OrderId)
+                .ExecuteUpdateAsync(setter
+                    => setter.SetProperty(x => x.Status, "InProcess"));
+
             await dbContext.SaveChangesAsync();
             
             await messageActions.CompleteMessageAsync(message);
